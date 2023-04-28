@@ -1,0 +1,68 @@
+http:
+  port: 8080
+admin:
+  port: 9876
+  host: localhost
+apiEndpoints:
+  cr-movies:
+    host: '*'
+    paths: '/*'
+    methods: ['POST','GET']
+  ud-movies:
+    host: '*'
+    paths: '/*'
+    methods: ['PUT','DELETE']
+  dev:
+    host: '*'
+    paths: '/*'
+    methods: ['GET']
+serviceEndpoints:
+  cr-movies:
+    url: 'http://localhost:4011'
+  ud-movies:
+    url: 'http://localhost:4012'
+  dev:
+    url: 'http://localhost:4013'
+policies:
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - log
+  - oauth2
+  - proxy
+  - rate-limit
+pipelines:
+  cr-movies:
+    apiEndpoints:
+      - cr-movies
+    policies:
+      - log:
+          - action:
+              message: '[cr-movies]${req.method}'
+      - proxy:
+          - action:
+              serviceEndpoint: cr-movies
+              changeOrigin: true
+  ud-movies:
+    apiEndpoints:
+      - ud-movies
+    policies:
+      - log:
+          - action:
+              message: '[ud-movies]${req.method}'
+      - proxy:
+          - action:
+              serviceEndpoint: ud-movies
+              changeOrigin: true
+  dev:
+    apiEndpoints:
+      - dev
+    policies:
+      - log:
+          - action:
+              message: '[dev]${req.method}'
+      - proxy:
+          - action:
+              serviceEndpoint: dev
+              changeOrigin: true
