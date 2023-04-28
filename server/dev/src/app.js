@@ -14,7 +14,7 @@ app.set("port",4013);
 // Middlewares
 app.use(morgan("dev"));
 
-app.use("/movie",p1Routes.router);
+app.use("",p1Routes.router);
 
 /**
  * Creamos pool conection para evitar crear muchas conexiones
